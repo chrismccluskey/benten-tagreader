@@ -9,9 +9,20 @@
   pruneopts = "UT"
   revision = "a9f04c2798caa184ec116ff25e9a1a15e9b3f79a"
 
+[[projects]]
+  digest = "1:1d617315a7853f3cd8cdf3c110b3ea40bdd7601e2562c3f81cc160cd348008f0"
+  name = "gopkg.in/alessio/shellescape.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "52074bc9df61e0d2af85c160b3a325403955d7fb"
+  version = "v1.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/dhowden/tag"]
+  input-imports = [
+    "github.com/dhowden/tag",
+    "gopkg.in/alessio/shellescape.v1",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

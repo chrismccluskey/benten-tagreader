@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"flag"
 	"path/filepath"
 
 	"github.com/dhowden/tag"
@@ -12,6 +13,17 @@ import (
 
 func main() {
 	var files []string
+
+	verbose := flag.Bool("verbose", false, "increase verbosity")
+	printFrames := flag.Bool("print-frames", false, "print all id3 frames in file")
+	matchText := flag.String("match-text", "", "find text in frame (requires match-frame)")
+	matchFrame := flag.String("match-frame", "", "find text in frame (requires match-frame)")
+
+	flag.Parse()
+
+	if *verbose {
+		fmt.Printf("Searching for %s = %s\n\n", *matchFrame, *matchText)
+	}
 
 	root := "./"
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
@@ -36,16 +48,21 @@ func main() {
 						log.Print(err)
 					} else {
 
-						//fmt.Println(file)
+						if *printFrames {
+							fmt.Println()
+							fmt.Println(file)
+						}
 						for k, v := range m.Raw() {
 
-							//fmt.Printf("%s: %s\n", k, v)
-
-							if k == "TIT1" && v == "DELETE" {
-								fmt.Println(shellescape.Quote(file))
+							if *printFrames {
+								fmt.Printf("%s: %s\n", k, v)
+							} else {
+								if k == *matchFrame && v == *matchText {
+									fmt.Println(shellescape.Quote(file))
+								}
 							}
+
 						}
-						//fmt.Println()
 					}
 				}
 			}

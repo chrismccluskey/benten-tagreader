@@ -3,6 +3,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:accdedb8822f3e80885f08ca02a50bd6ee95907787297c1d35eb12535717eca7"
+  name = "github.com/dhowden/tag"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a9f04c2798caa184ec116ff25e9a1a15e9b3f79a"
+
+[[projects]]
+  branch = "master"
   digest = "1:891fcfe9d7db88459b4582a52fcba2f8a6da8065700902e09813ea01bd7d4c17"
   name = "github.com/djimenez/iconv-go"
   packages = ["."]
@@ -25,6 +33,9 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/mikkyang/id3-go"]
+  input-imports = [
+    "github.com/dhowden/tag",
+    "github.com/mikkyang/id3-go",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

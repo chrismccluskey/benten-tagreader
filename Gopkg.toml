@@ -31,8 +31,4 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/mikkyang/id3-go"
-
-[[constraint]]
-  branch = "master"
   name = "github.com/dhowden/tag"

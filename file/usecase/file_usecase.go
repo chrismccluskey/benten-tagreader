@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"os"
 	"time"
 
 	"github.com/chrismccluskey/benten-tagreader/file"
@@ -20,12 +21,25 @@ func NewFileUsecase(f file.Repository, timeout time.Duration) file.Usecase {
 	}
 }
 
-func (f *fileUsecase) GetOne(c context.Context, path string) (*models.File, error) {
+func (f *fileUsecase) GetOne(c context.Context, path string, info os.FileInfo) (*models.File, error) {
 
 	ctx, cancel := context.WithTimeout(c, f.contextTimeout)
 	defer cancel()
 
-	file, err := f.fileRepo.GetOne(ctx, path)
+	file, err := f.fileRepo.GetOne(ctx, path, info)
+	if err != nil {
+		return nil, err
+	}
+
+	return file, nil
+}
+
+func (f *fileUsecase) GetAll(c context.Context, root string) (*[]models.File, error) {
+
+	ctx, cancel := context.WithTimeout(c, f.contextTimeout)
+	defer cancel()
+
+	file, err := f.fileRepo.GetAll(ctx, root)
 	if err != nil {
 		return nil, err
 	}

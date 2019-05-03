@@ -4,9 +4,12 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/chrismccluskey/benten-tagreader/file"
 	"github.com/chrismccluskey/benten-tagreader/models"
@@ -22,33 +25,66 @@ func NewFilesystemFileRepo(fs string) file.Repository {
 	}
 }
 
-func (fr *filesystemFileRepo) GetOne(ctx context.Context, path string) (*models.File, error) {
+func (fr *filesystemFileRepo) GetOne(ctx context.Context, path string, info os.FileInfo) (*models.File, error) {
 
-	hasher := sha256.New()
+	if !info.IsDir() {
 
-	f, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
+		hasher := sha256.New()
+
+		f, err := os.Open(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer f.Close()
+
+		name := f.Name()
+
+		//fi, err := f.Stat()
+		//if err != nil {
+		//	log.Fatal(err)
+		//}
+
+		size := info.Size()
+
+		if _, err := io.Copy(hasher, f); err != nil {
+			log.Fatal(err)
+		}
+
+		id := hex.EncodeToString(hasher.Sum(nil))
+
+		file := &models.File{ID: id, Name: name, Size: size}
+
+		return file, nil
+
 	}
-	defer f.Close()
 
-	name := f.Name()
+	return nil, errors.New("Cannot read file properties of directory")
 
-	fi, err := f.Stat()
-	if err != nil {
-		log.Fatal(err)
-	}
+}
 
-	size := fi.Size()
+func (fr *filesystemFileRepo) GetAll(ctx context.Context, root string) (*[]models.File, error) {
 
-	if _, err := io.Copy(hasher, f); err != nil {
-		log.Fatal(err)
-	}
+	var files []models.File
 
-	id := hex.EncodeToString(hasher.Sum(nil))
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 
-	file := &models.File{ID: id, Name: name, Size: size}
+		if len(path) > 3 && path[len(path)-4:len(path)] == ".mp3" { //TODO: move filetype logic elsewhere
+			fmt.Println(path)
 
-	return file, nil
+			// get file information
+			file, err := fr.GetOne(context.TODO(), path, info)
+			if err != nil {
+				panic(err)
+			}
+			fmt.Println(file)
+			files = append(files, *file)
+
+		}
+
+		return nil
+
+	})
+
+	return &files, err
 
 }

@@ -1,10 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	_fileGraphQLDeliver "github.com/chrismccluskey/benten-tagreader/file/delivery/graphql"
@@ -33,24 +33,14 @@ func main() {
 	fu := _fileUsecase.NewFileUsecase(fr, timeoutContext)
 	_fileGraphQLDeliver.NewFileGraphQLHandler(fu)
 
-	root := "./"
+	root := os.Args[1]
 
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-
-		if len(path) > 3 && path[len(path)-4:len(path)] == ".mp3" {
-			fmt.Println(path)
-
-			// get file information
-
-			// could push to graphql
-		}
-
-		return nil
-
-	})
+	files, err := fr.GetAll(context.TODO(), root)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Print(files)
 
 }

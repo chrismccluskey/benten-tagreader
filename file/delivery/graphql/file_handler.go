@@ -15,13 +15,12 @@ type GraphQLFileHandler struct {
 }
 
 func NewFileGraphQLHandler(fu file.Usecase) {
-	//handler := &GraphQLFileHandler{
-	//	fileUsecase: fu,
-	//}
+	/*handler := &GraphQLFileHandler{
+		fileUsecase: fu,
+	}*/
 }
 
-func (f *GraphQLFileHandler) Store(ctx context.Context) error {
-	var file models.File
+func (f *GraphQLFileHandler) Store(ctx context.Context, file models.File) error {
 	//TODO: use context here
 	// -- init
 	client := graphql.NewClient("http://localhost:4000/graphql")
